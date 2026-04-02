@@ -17,8 +17,13 @@
         h1 {
             /* 15vw means the text is roughly 15% of the screen width */
             font-size: 10vw; 
-            text-align: center;
-            margin-top: 0; /* Ensures it is flush with the top */
+            display: flex;
+            justify-content: center; /* Centers horizontally */
+            align-items: center;     /* Centers vertically within the header */
+            width: 100%;
+            position: absolute;      /* Forces it to the very top */
+            top: 0;
+            left: 0;
         }
     </style>
 </head>
