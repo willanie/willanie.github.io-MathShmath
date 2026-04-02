@@ -1,3 +1,4 @@
+<!--
 <!doctype html>
 <html>
 <head>
@@ -36,3 +37,83 @@
   <p style="text-align: center;"><br><br>Welcome to my site.</p>
 </body>
 </html>
+-->
+<!-- gemini_text_fill_v9.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Responsive Text Block</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #0c0c0c;
+            overflow: hidden; /* Prevents scrolling */
+            font-family: sans-serif;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            height: 95vh; /* Fills height */
+            width: 95vw; /* Fills width */
+            text-align: center;
+            gap: 0.5vh; /* Dynamic spacing between lines */
+        }
+
+        .line {
+            line-height: 1.2;
+            width: 100%;
+            white-space: nowrap; /* Keeps words together */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Handles overflow gracefully */
+        }
+
+        /* 11 Lines with varying sizes (using vh and vmin for responsiveness) */
+        .l1 { font-size: 6.5vh; color: #ff00ff; font-weight: bold; }
+        .l2 { font-size: 4vh; color: #555; }
+        .l3 { font-size: 4vh; color: #007bff; }
+        .l4 { font-size: 4.0vh; color: #777; }
+        .l5 { font-size: 4.0vh; color: #333; }
+        .l6 { font-size: 4.0vh; color: #28a745;  }
+        .l7 { font-size: 4.0vh; color: #555; }
+        .l8 { font-size: 4.0vh; color: #dc3545; }
+        .l9 { font-size: 4.0vh; color: #777; }
+        .l10 { font-size: 4.0vh; color: #a09f9f;  }
+        .l11 { font-size: 4.0vh; color: #dddcdc; }
+
+        /* Tablet/Laptop adjustments */
+        @media (min-width: 500px) {
+            .container { gap: 0.25vh; }
+            .l1 { font-size: 12vh; }
+            .l6 { font-size: 4vh; }
+            .l10 { font-size: 4vh; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="line l1">MathShmath</div>
+        <div class="line l2">is intended for people</div>
+        <div class="line l3">who hate math.</div>
+        <div class="line l4">It is an attempt to make</div>
+        <div class="line l5">intermediate math fun.</div>
+        <div class="line l6">Yeah, it's hard to believe</div>
+        <div class="line l7">that's possible.</div>
+        <div class="line l8">At the top</div>
+        <div class="line l9">click on the 3 lines</div>
+        <div class="line l10">or the word Home</div>
+        <div class="line l11">to try one of the doodles.</div>
+    </div>
+</body>
+</html>
+
