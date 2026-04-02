@@ -1,2 +1,2 @@
-# willanie.github.io-MathShmath
+# MathShmath
 website for intermediate math doodles
