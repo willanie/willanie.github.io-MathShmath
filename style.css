@@ -2,8 +2,10 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
 }
-
+h1 { font-size: clamp(1rem, 3.5vw + 1rem, 3.5rem); }
+p { font-size: clamp(1rem, 2.5vw + 1rem, 2.5rem); }
 .navbar {
     position: fixed;
             bottom: 1vh;
@@ -34,4 +36,3 @@ body {
 .navbar a.active {
     background-color: #04AA6D;
 }
-
