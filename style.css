@@ -4,8 +4,8 @@ body {
     font-family: Arial, sans-serif;
     -webkit-text-size-adjust: 100%;
 }
-h1 { font-size: clamp(1.5rem, 4.5vw + 1.5rem, 8.5vw); }
-p { font-size: clamp(1rem, 3.0vw + 1rem, 4.0vw); }
+h1 { font-size: clamp(1.5rem, 4.5vw + 1.5rem, 7.5vw); }
+p { font-size: clamp(1rem, 2.0vw + 1rem, 3.0vw); }
 .navbar {
     position: fixed;
             bottom: 2vh;
