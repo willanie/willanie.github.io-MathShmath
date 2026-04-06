@@ -9,7 +9,10 @@ p { font-size: clamp(1rem, 2.0vw + 1rem, 3.0vw); }
 .navbar {
     position: fixed;
     bottom: 2vh;
-    width: 100%;
+    width: 99%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
     height: 6.0vh;
     background: #f89e9e;
     display: flex;
