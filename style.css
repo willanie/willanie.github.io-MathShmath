@@ -19,7 +19,7 @@ p { font-size: clamp(1rem, 1.0vw + 1rem, 3.0vw); }
     display: flex;
     justify-content: space-around;
     align-items: center;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.8);
+    box-shadow: 0 -2px 10px rgba(50, 90, 256, 0.99);
     z-index: 1000;
 }
 
