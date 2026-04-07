@@ -15,11 +15,11 @@ p { font-size: clamp(1rem, 1.0vw + 1rem, 3.0vw); }
     right: 0;
     margin: 0 auto;
     height: 6.0vh;
-    background: #f000f0;
+    background: #320188;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    box-shadow: 0 -2px 10px rgba(50, 90, 256, 0.99);
+    box-shadow: 0 -2px 10px rgba(50, 01, 136, 0.99);
     z-index: 1000;
 }
 
@@ -34,7 +34,7 @@ p { font-size: clamp(1rem, 1.0vw + 1rem, 3.0vw); }
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #444;
+    background-color: #636363;
     border-radius: 4px;
     transition: background-color 0.3s;
 }
