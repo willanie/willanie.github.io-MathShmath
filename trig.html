@@ -2,6 +2,45 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .container {
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            margin: 0 auto;
+        }
+        canvas {
+            background: #1e1e1e;
+            border-radius: 4px;
+            width: 100%;
+            height: auto;
+            border: 1px solid #333;
+        }
+        .controls {
+            margin-top: 10px;
+            display: grid;
+            gap: 16px;
+        }
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #252525;
+            padding: 8px;
+            border-radius: 8px;
+        }
+        label { font-size: 0.8rem; font-weight: 600; color: #888; width: 40px; text-align: left; }
+        input[type="number"] {
+            width: 55px;
+            background: #121212;
+            border: 1px solid #444;
+            color: #00ffcc;
+            padding: 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        input[type="range"] { flex-grow: 1; accent-color: #00ffcc; }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -11,5 +50,104 @@
         <a href="donuts.html"><span>&#x1F369;</span><span>Donuts</span></a>
     </nav>
     <h1 style="color: #ff00ff; text-align: center; font-weight: 900; margin-bottom: 0;">Trig Starter</h1>
+
+<div class="container">
+    <h2 style="color: #0bd40b;"">Sin Wave <i>f</i>(&theta;) =  A&sdot;sin(F&sdot;&theta; + P)</h2>
+    <canvas id="graph"></canvas>
+    <div class="controls">
+        <div class="control-group">
+            <label>AMP</label>
+            <input type="range" id="ampSlider" min="0" max="10" value="10">
+            <input type="number" id="ampInput" value="10">
+        </div>
+        <div class="control-group">
+            <label>FREQ</label>
+            <input type="range" id="freqSlider" min="1" max="20" step="0.1" value="1">
+            <input type="number" id="freqInput" value="1">
+        </div>
+        <div class="control-group">
+            <label>PHASE</label>
+            <input type="range" id="phaseSlider" min="0" max="20" step="0.1" value="0">
+            <input type="number" id="phaseInput" value="0">
+        </div>
+    </div>
+</div>
+
+    <script>
+    const canvas = document.getElementById('graph');
+    const ctx = canvas.getContext('2d');
+    const controls = {
+        amp: { s: document.getElementById('ampSlider'), n: document.getElementById('ampInput') },
+        freq: { s: document.getElementById('freqSlider'), n: document.getElementById('freqInput') },
+        phase: { s: document.getElementById('phaseSlider'), n: document.getElementById('phaseInput') }
+    };
+
+    const ampslider = document.getElementById('ampSlider');
+    const ampmax = ampslider.max;
+    //console.log("amp max=%d", ampmax);
+
+    let w, h;
+    function resize() {
+        w = canvas.width = canvas.offsetWidth * 2;
+        h = canvas.height = 400;
+        draw();
+    }
+
+    function update(key, val) {
+        controls[key].s.value = val;
+        controls[key].n.value = val;
+        draw();
+    }
+
+    Object.keys(controls).forEach(key => {
+        controls[key].s.oninput = (e) => update(key, e.target.value);
+        controls[key].n.oninput = (e) => update(key, e.target.value);
+    });
+
+    function draw() {
+        ctx.clearRect(0, 0, w, h);
+        
+        // Grid & Labels
+        ctx.strokeStyle = '#4a4a4a';
+        ctx.lineWidth = 5;
+        ctx.fillStyle = '#999';
+        ctx.font = '24px sans-serif';
+        
+        // vertical lines
+        for(let i = 0; i <= 10; i++) {
+            let x = (w/10) * i;
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+        }
+
+        // horizontal lines
+        for(let i = 0; i <= 6; i++) {
+            let y = (h/6) * i;
+            let num = 10 - ((ampmax / 3) * i);
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+            //ctx.fillText(Math.round(h/2 - y), 10, y - 10);
+            ctx.fillText(Math.round(num), 10, y - 10);
+        }
+
+        // Sine Wave
+        const a = parseFloat(controls.amp.n.value) * 20.0;
+        const f = parseFloat(controls.freq.n.value) * 1.0;
+        const p = parseFloat(controls.phase.n.value) * 1.0;
+        const step = f * ((2.0 * Math.PI) / w);
+        //console.log("w=%f freq=%f phase=%f step=%f PI=%f", w,f,p,step, Math.PI);
+
+        ctx.beginPath();
+        ctx.strokeStyle = '#00ffcc';
+        ctx.lineWidth = 5;
+        for (let x = 0; x < w; x++) {
+            const xUnit = x * step; 
+            const y = h/2 + Math.sin((xUnit) + p) * a;
+            x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    }
+
+    window.onresize = resize;
+    resize();
+</script>
 </body>
 </html>
