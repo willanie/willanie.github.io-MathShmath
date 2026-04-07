@@ -3,6 +3,24 @@
 <head>
     <link rel="stylesheet" href="style.css">
     <style>
+        .custom-btn {
+        background-color: #04AA6D; /* Green background */
+        border: 3px;
+        color: white;
+        padding: 1vw 1.5vw;
+        text-align: center;
+        font-size: 2vw;
+        cursor: pointer;
+        border-radius: 6px; /* Rounded corners */
+        }
+  .custom-btn.hover { background-color: #015f3d; }
+        .container {
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            margin: 0 auto;
+        }
+  .custom-btn.active { background-color: #ff0000; }
         .container {
             width: 90%;
             max-width: 400px;
@@ -52,7 +70,9 @@
     <h1 style="color: #ff00ff; text-align: center; font-weight: 900; margin-bottom: 0;">Trig Starter</h1>
 
 <div class="container">
-    <h2 style="color: #0bd40b;"">Sin Wave <i>f</i>(&theta;) =  A&sdot;sin(F&sdot;&theta; + P)</h2>
+    <button class="custom-btn active"; id="SinButton" onclick="toggleActive(this)">SIN</button>
+    <button class="custom-btn"; id="CosButton" onclick="toggleActive(this)">COS</button>
+    <h2 id="trigtype"; style="color: #0bd40b;">Sin Wave <i>f</i>(&theta;) =  A&sdot;sin(F&sdot;&theta; + P)</h2>
     <canvas id="graph"></canvas>
     <div class="controls">
         <div class="control-group">
@@ -74,6 +94,27 @@
 </div>
 
     <script>
+    var activebutton = "SIN";
+    function toggleActive(button) {
+        const buttonIds = ["SinButton", "CosButton"];
+        buttonIds.forEach(id => {
+            document.getElementById(id).style.backgroundColor = "#04AA6D";
+        });
+        button.classList.toggle('active');
+        button.style.backgroundColor = "#ff0000";
+        if (button.id == "SinButton") {
+            //console.log("SIN button clicked");
+            activebutton = "SIN";
+            document.getElementById("trigtype").innerHTML = "Sin Wave <i>f</i>(&theta;) =  A&sdot;sin(F&sdot;&theta; + P)";
+            resize();
+        } else if (button.id == "CosButton") {
+            //console.log("COS button button clicked");
+            activebutton = "COS";
+            document.getElementById("trigtype").innerHTML = "Cos Wave <i>f</i>(&theta;) =  A&sdot;cos(F&sdot;&theta; + P)";
+            resize();
+        }
+    }
+
     const canvas = document.getElementById('graph');
     const ctx = canvas.getContext('2d');
     const controls = {
@@ -131,7 +172,16 @@
         // Sine Wave
         const a = parseFloat(controls.amp.n.value) * 20.0;
         const f = parseFloat(controls.freq.n.value) * 1.0;
-        const p = parseFloat(controls.phase.n.value) * 1.0;
+        let p = 0;
+        //console.log(activebutton);
+        if (activebutton == "SIN") {
+            //console.log("SIN button here");
+            p = parseFloat(controls.phase.n.value) * 1.0;    
+        } else {
+            //console.log("COS button here");
+            p = (parseFloat(controls.phase.n.value) * 1.0) + Math.PI;
+        }
+        
         const step = f * ((2.0 * Math.PI) / w);
         //console.log("w=%f freq=%f phase=%f step=%f PI=%f", w,f,p,step, Math.PI);
 
@@ -139,8 +189,16 @@
         ctx.strokeStyle = '#00ffcc';
         ctx.lineWidth = 5;
         for (let x = 0; x < w; x++) {
-            const xUnit = x * step; 
-            const y = h/2 + Math.sin((xUnit) + p) * a;
+            const xUnit = x * step;
+            let y = 0;
+            //console.log("inside %s", activebutton);
+            if (activebutton == "SIN") {
+                //console.log("inside sin side of if %s p=%f", activebutton, p);
+                y = h/2 + Math.sin((xUnit) + p) * a;
+            } else {
+                //console.log("inside cos side of if %s p=%f", activebutton, p);
+                y = h/2 + Math.cos((xUnit) + p) * a;
+            }
             x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
         }
         ctx.stroke();
