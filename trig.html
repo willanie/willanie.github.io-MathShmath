@@ -129,9 +129,15 @@
     //console.log("amp max=%d", ampmax);
 
     let w, h;
+    let mobileH = 400;
+    let largerH = 700;
     function resize() {
         w = canvas.width = canvas.offsetWidth * 2;
-        h = canvas.height = 400;
+        h = canvas.height = largerH;
+
+        if (canvas.width < 600) {
+            h = canvas.height = mobileH;
+        }
         draw();
     }
 
@@ -171,7 +177,11 @@
         }
 
         // Sine Wave
-        const a = parseFloat(controls.amp.n.value) * 20.0;
+        let ampscale = 20.0;
+        if (canvas.width > 600) {
+            ampscale = 19.8 * ( largerH / mobileH);
+        }
+        const a = parseFloat(controls.amp.n.value) * ampscale;
         const f = parseFloat(controls.freq.n.value) * 1.0;
         let p = 0;
         //console.log(activebutton);
