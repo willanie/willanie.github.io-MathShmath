@@ -19,11 +19,11 @@
 
         .custom-btn.active { background-color: #ff0000; }
         .trigcontainer {
-            background: #f30404;
+            /* background: #f30404; */
             width: 90vw;
             height: 70vh;
             max-width: 760px;
-            max-height: 580px;
+            max-height: 400px;
             text-align: center;
             margin: 0 auto;
             /* height: -webkit-fill-available; */
@@ -51,7 +51,7 @@
         label { font-size: 0.8rem; font-weight: 600; color: #888; width: 40px; text-align: left; }
         input[type="number"] {
             width: 55px;
-            background: #121212;
+            background: #222222;
             border: 1px solid #444;
             color: #00ffcc;
             padding: 6px;
@@ -77,17 +77,17 @@
     <canvas id="graph"></canvas>
     <div class="controls">
         <div class="control-group">
-            <label>AMP</label>
+            <label style="color: white;">Amp</label>
             <input type="range" id="ampSlider" min="0" max="10" value="10">
             <input type="number" id="ampInput" value="10">
         </div>
         <div class="control-group">
-            <label>FREQ</label>
+            <label style="color: white;">Freq</label>
             <input type="range" id="freqSlider" min="1" max="20" step="0.1" value="1">
             <input type="number" id="freqInput" value="1">
         </div>
         <div class="control-group">
-            <label>PHASE</label>
+            <label style="color: white;">Phase</label>
             <input type="range" id="phaseSlider" min="0" max="20" step="0.1" value="0">
             <input type="number" id="phaseInput" value="0">
         </div>
