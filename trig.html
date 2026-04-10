@@ -118,6 +118,7 @@
 
     const canvas = document.getElementById('graph');
     const ctx = canvas.getContext('2d');
+    console.log("early on ctxcanvaswidth=%d ctxcanvasheight=%d", ctx.canvas.width, ctx.canvas.height);
     const controls = {
         amp: { s: document.getElementById('ampSlider'), n: document.getElementById('ampInput') },
         freq: { s: document.getElementById('freqSlider'), n: document.getElementById('freqInput') },
@@ -133,6 +134,7 @@
     let mobileHlandscape = 260;
     let mobileH = 360;
     let largerH = 700;
+    let extralargeH = 1200;
     const mobileOrientationHeights = [700, 360];
     function resize() {
         const isPortrait = window.matchMedia("(orientation: portrait)").matches;
@@ -144,20 +146,29 @@
         else {
             console.log("isPortrait=%s height chosen=%d", isPortrait, mobileOrientationHeights[0]);
         }
-        
+        console.log("in resize before assignment canvaswidth=%d canvasheight=%d canvasoffsetWidth=%d", canvas.width, canvas.height, canvas.offsetWidth);
         w = canvas.width = canvas.offsetWidth * 2;
         h = canvas.height = largerH;
-        console.log("originalwidth=%d originalheight=%d", originalwidth, originalheight);
+        console.log("originalwidth=%d originalheight=%d w=%d h=%d", originalwidth, originalheight, w, h);
         if (originalwidth < 680) {
             console.log("width less than 680 w=%d", originalwidth);
             if (isPortrait) {
                 h = canvas.height = largerH;
-                console.log("got in here landscape h=%d", h);
+                console.log("got in here portrait h=%d", h);
             } else {
                 h = canvas.height = mobileHlandscape;
-                console.log("still mobile h=%d", h);
+                console.log("still mobile not portrait h=%d", h);
             }
-        } 
+        } else {
+            console.log("width greater than 680 w=%d", originalwidth);
+            if (isPortrait) {
+                h = canvas.height = extralargeH;
+                console.log("got in here portrait h=%d", h);
+            } else {
+                h = canvas.height = extralargeH;
+                console.log("still mobile not portrait h=%d", h);
+            }
+        }
         draw();
     }
 
@@ -198,12 +209,15 @@
         const isPortrait = window.matchMedia("(orientation: portrait)").matches;
         // Sine Wave
         let ampscale = 17.9;
+        console.log("in draw isPortrait=%s canvaswidth=%d w=%d h=%d", isPortrait, canvas.width, w, h);
         if (canvas.width > 600) {
             console.log("in ampscale fix isPortrait=%s width=%d", isPortrait, w);
             let fixamp = ( largerH / mobileH);
             if (!isPortrait && h < 400 ) {
                 fixamp = 1.0 * ( mobileHlandscape / mobileH);
                 console.log("got here fixamp=%f", fixamp);
+            } else {
+                fixamp = 1.0 * ( extralargeH / mobileH);
             }
             ampscale = ampscale * fixamp;
         }
