@@ -199,10 +199,13 @@
         // Sine Wave
         let ampscale = 17.9;
         if (canvas.width > 600) {
-            ampscale = ampscale * ( largerH / mobileH);
-            if (!isPortrait) {
-                ampscale = 0.51 * ampscale * ( mobileHlandscape / mobileH);
+            console.log("in ampscale fix isPortrait=%s width=%d", isPortrait, w);
+            let fixamp = ( largerH / mobileH);
+            if (!isPortrait && h < 400 ) {
+                fixamp = 1.0 * ( mobileHlandscape / mobileH);
+                console.log("got here fixamp=%f", fixamp);
             }
+            ampscale = ampscale * fixamp;
         }
         const a = parseFloat(controls.amp.n.value) * ampscale;
         const f = parseFloat(controls.freq.n.value) * 1.0;
