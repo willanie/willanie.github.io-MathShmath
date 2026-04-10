@@ -127,17 +127,37 @@
     const ampslider = document.getElementById('ampSlider');
     const ampmax = ampslider.max;
     //console.log("amp max=%d", ampmax);
-
+    let originalwidth = document.documentElement.clientWidth;
+    let originalheight = document.documentElement.clientHeight;
     let w, h;
+    let mobileHlandscape = 260;
     let mobileH = 360;
     let largerH = 700;
+    const mobileOrientationHeights = [700, 360];
     function resize() {
+        const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+        console.log(isPortrait);
+        console.log(isPortrait ? "Portrait" : "Landscape");
+        if (isPortrait) {
+            console.log("isPortrait=%s height chosen=%d", isPortrait, mobileOrientationHeights[1]);
+        }
+        else {
+            console.log("isPortrait=%s height chosen=%d", isPortrait, mobileOrientationHeights[0]);
+        }
+        
         w = canvas.width = canvas.offsetWidth * 2;
         h = canvas.height = largerH;
-
-        if (canvas.width < 600) {
-            h = canvas.height = mobileH;
-        }
+        console.log("originalwidth=%d originalheight=%d", originalwidth, originalheight);
+        if (originalwidth < 680) {
+            console.log("width less than 680 w=%d", originalwidth);
+            if (isPortrait) {
+                h = canvas.height = largerH;
+                console.log("got in here landscape h=%d", h);
+            } else {
+                h = canvas.height = mobileHlandscape;
+                console.log("still mobile h=%d", h);
+            }
+        } 
         draw();
     }
 
@@ -175,11 +195,14 @@
             //ctx.fillText(Math.round(h/2 - y), 10, y - 10);
             ctx.fillText(Math.round(num), 10, y - 10);
         }
-
+        const isPortrait = window.matchMedia("(orientation: portrait)").matches;
         // Sine Wave
         let ampscale = 17.9;
         if (canvas.width > 600) {
             ampscale = ampscale * ( largerH / mobileH);
+            if (!isPortrait) {
+                ampscale = 0.51 * ampscale * ( mobileHlandscape / mobileH);
+            }
         }
         const a = parseFloat(controls.amp.n.value) * ampscale;
         const f = parseFloat(controls.freq.n.value) * 1.0;
@@ -217,6 +240,20 @@
 
     window.onresize = resize;
     resize();
+    window.addEventListener('load', () => {
+    // Get the updated viewport dimensions
+    originalwidth = window.innerWidth;
+    originalheight = window.innerHeight;
+    
+    console.log(`Document loaded: ${originalwidth}x${originalheight}`);
+    });
+    window.addEventListener('orientationchange', () => {
+    // Get the updated viewport dimensions
+    originalwidth = window.innerWidth;
+    originalheight = window.innerHeight;
+    
+    console.log(`orientationchange called: ${originalwidth}x${originalheight}`);
+    });
 </script>
 </body>
 </html>
