@@ -166,7 +166,7 @@
     let originalwidth = document.documentElement.clientWidth;
     let originalheight = document.documentElement.clientHeight;
     let w, h;
-    let mobilelandscapeH = 260;
+    let mobilelandscapeH = 200;
     let mobileH = 360;
     let largerH = 700;
     let extralargeH = 640;
@@ -192,7 +192,7 @@
         console.log("originalwidth=%d originalheight=%d w=%d h=%d", originalwidth, originalheight, w, h);
         if (devicetype == 'mobile'){
             if (orientation == 'Portrait'){
-                h = canvas.height = largerH;
+                h = canvas.height = mobileH;
                 fixamp = ( mobileH / mobileH );
             } else {
                 h = canvas.height = mobilelandscapeH;
