@@ -21,9 +21,9 @@
         .trigcontainer {
             /* background: #f30404; */
             width: 90vw;
-            height: 70vh;
-            max-width: 760px;
-            max-height: 400px;
+            height: 68vh;
+            /* max-width: 760px;
+            max-height: 500px; */
             text-align: center;
             margin: 0 auto;
             /* height: -webkit-fill-available; */
@@ -62,31 +62,31 @@
     </style>
 </head>
 <body>
-    <nav class="navbar";>
+    <nav id="navbar"; class="navbar";>
         <a href="index.html"><span>&#x1F3E0;</span><span>Home</span></a>
         <a href="trig.html" class="active"><span>&#x223F;</span><span>Trig</span></a>
         <a href="credits.html"><span>&#x1F465;</span><span>Credits</span></a>
         <a href="donuts.html"><span>&#x1F369;</span><span>Donuts</span></a>
     </nav>
-    <h1 style="color: #ff00ff; text-align: center; font-weight: 900; margin-bottom: 0; font-size: 0.8rem;">Trig Starter</h1>
+    <h1 id="trigtitle"; style="color: #ff00ff; text-align: center; font-weight: 900; margin-bottom: 0; font-size: 0.8rem;">Trig Starter</h1>
 
-<div class="trigcontainer">
+<div id="trigcontainer"; class="trigcontainer" style="background-color: #cf02f8;">
     <button class="custom-btn active"; id="SinButton" onclick="toggleActive(this)">SIN</button>
     <button class="custom-btn"; id="CosButton" onclick="toggleActive(this)">COS</button>
-    <h2 id="trigtype"; style="color: #0bd40b; margin-top: 0; margin-bottom: 0;">Sin <i>f</i>(&theta;) =  A&sdot;sin(F&sdot;&theta; + P)</h2>
+    <h2 id="trigformula"; style="color: #0bd40b; margin-top: 0; margin-bottom: 0;">Sin <i>f</i>(&theta;) =  A&sdot;sin(F&sdot;&theta; + P)</h2>
     <canvas id="graph"></canvas>
-    <div class="controls">
-        <div class="control-group">
+    <div id="wavecontrols"; class="controls">
+        <div  id="ampcontrol"; class="control-group">
             <label style="color: white;">Amp</label>
             <input type="range" id="ampSlider" min="0" max="10" value="10">
             <input type="number" id="ampInput" value="10">
         </div>
-        <div class="control-group">
+        <div id="freqcontrol"; class="control-group">
             <label style="color: white;">Freq</label>
             <input type="range" id="freqSlider" min="1" max="20" step="0.1" value="1">
             <input type="number" id="freqInput" value="1">
         </div>
-        <div class="control-group">
+        <div  id="phasecontrol"; class="control-group">
             <label style="color: white;">Phase</label>
             <input type="range" id="phaseSlider" min="0" max="20" step="0.1" value="0">
             <input type="number" id="phaseInput" value="0">
@@ -95,6 +95,27 @@
 </div>
 
     <script>
+    function getDeviceType() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const isTouch = navigator.maxTouchPoints > 0;
+        const isCoarse = window.matchMedia("(pointer: coarse)").matches;
+
+        if (isTouch && isCoarse) {
+            if (width < 768){
+                return 'mobile';
+            } else {
+                return 'tablet';
+            }
+        }
+        return 'desktop/laptop';
+    }
+    function getDeviceOrientation() {
+        const isPortrait = window.matchMedia("(orientation: portrait)").matches;  
+        return isPortrait ? "Portrait" : "Landscape";  
+    }
+
+
     var activebutton = "SIN";
     function toggleActive(button) {
         const buttonIds = ["SinButton", "CosButton"];
@@ -106,12 +127,12 @@
         if (button.id == "SinButton") {
             //console.log("SIN button clicked");
             activebutton = "SIN";
-            document.getElementById("trigtype").innerHTML = "Sin <i>f</i>(&theta;) =  A&sdot;sin(F&sdot;&theta; + P)";
+            document.getElementById("trigformula").innerHTML = "Sin <i>f</i>(&theta;) =  A&sdot;sin(F&sdot;&theta; + P)";
             resize();
         } else if (button.id == "CosButton") {
             //console.log("COS button button clicked");
             activebutton = "COS";
-            document.getElementById("trigtype").innerHTML = "Cos <i>f</i>(&theta;) =  A&sdot;cos(F&sdot;&theta; + P)";
+            document.getElementById("trigformula").innerHTML = "Cos <i>f</i>(&theta;) =  A&sdot;cos(F&sdot;&theta; + P)";
             resize();
         }
     }
@@ -124,6 +145,20 @@
         freq: { s: document.getElementById('freqSlider'), n: document.getElementById('freqInput') },
         phase: { s: document.getElementById('phaseSlider'), n: document.getElementById('phaseInput') }
     };
+    const devicetype = getDeviceType();
+    const orientation = getDeviceOrientation();
+    const trigtitleheight = document.getElementById('trigtitle').offsetHeight;
+    const trigformulaheight = document.getElementById('trigformula').offsetHeight;
+    const SinButtonheight = document.getElementById('SinButton').offsetHeight;
+    const trigcontainerheight = document.getElementById('trigcontainer').offsetHeight;
+    const wavecontrolsheight = document.getElementById('wavecontrols').offsetHeight;
+    const ampInputheight = document.getElementById('ampcontrol').offsetHeight;
+    const freqInputheight = document.getElementById('freqcontrol').offsetHeight;
+    const phaseInputheight = document.getElementById('phaseInput').offsetHeight;
+    const navbarheight = document.getElementById('phaseInput').offsetHeight;
+    console.log("device=%s orientation=%s trigcontainerH=%d titleH=%d formulaH=%d sinbuttonH=%d", devicetype, orientation, trigcontainerheight, trigtitleheight, trigformulaheight, SinButtonheight);
+    console.log("wavecontrolsheight=%d ampInputheight=%d freqInputheight=%d phaseInputheight=%d navbarheight=%d", wavecontrolsheight, ampInputheight, freqInputheight, phaseInputheight, navbarheight);
+
 
     const ampslider = document.getElementById('ampSlider');
     const ampmax = ampslider.max;
@@ -131,10 +166,13 @@
     let originalwidth = document.documentElement.clientWidth;
     let originalheight = document.documentElement.clientHeight;
     let w, h;
-    let mobileHlandscape = 260;
+    let mobilelandscapeH = 260;
     let mobileH = 360;
     let largerH = 700;
-    let extralargeH = 660;
+    let extralargeH = 700;
+    let tabletlandscapeH = 1060;
+    let tabletportraitH = 1300;
+    let fixamp = 1.0;
     const mobileOrientationHeights = [700, 360];
     function resize() {
         const isPortrait = window.matchMedia("(orientation: portrait)").matches;
@@ -150,13 +188,37 @@
         w = canvas.width = canvas.offsetWidth * 2;
         h = canvas.height = largerH;
         console.log("originalwidth=%d originalheight=%d w=%d h=%d", originalwidth, originalheight, w, h);
+        if (devicetype == 'mobile'){
+            if (orientation == 'Portrait'){
+                h = canvas.height = largerH;
+                fixamp = ( mobileH / mobileH );
+            } else {
+                h = canvas.height = mobilelandscapeH;
+                fixamp = ( mobilelandscapeH / mobileH);
+            }
+        }
+        if (devicetype == 'tablet') {
+            if (orientation == 'Portrait') {
+                h = canvas.height = tabletportraitH;
+                fixamp = ( tabletportraitH / mobileH);
+            } else {
+                h = canvas.height = tabletlandscapeH;
+                fixamp = ( tabletlandscapeH / mobileH);
+            }
+        }
+
+        if (devicetype == 'desktop/laptop') {
+            h = canvas.height = extralargeH;
+            fixamp = ( extralargeH / mobileH);
+        }
+/*
         if (originalwidth < 680) {
             console.log("width less than 680 w=%d", originalwidth);
             if (isPortrait) {
                 h = canvas.height = largerH;
                 console.log("got in here portrait h=%d", h);
             } else {
-                h = canvas.height = mobileHlandscape;
+                h = canvas.height = mobilelandscapeH;
                 console.log("still mobile not portrait h=%d", h);
             }
         } else {
@@ -169,6 +231,7 @@
                 console.log("still mobile not portrait h=%d", h);
             }
         }
+*/
         draw();
     }
 
@@ -212,13 +275,15 @@
         console.log("in draw isPortrait=%s canvaswidth=%d w=%d h=%d", isPortrait, canvas.width, w, h);
         if (canvas.width > 600) {
             console.log("in ampscale fix isPortrait=%s width=%d", isPortrait, w);
+/*
             let fixamp = ( largerH / mobileH);
             if (!isPortrait && h < 400 ) {
-                fixamp = 1.0 * ( mobileHlandscape / mobileH);
+                fixamp = 1.0 * ( mobilelandscapeH / mobileH);
                 console.log("got here fixamp=%f", fixamp);
             } else {
                 fixamp = 1.0 * ( extralargeH / mobileH);
             }
+*/
             ampscale = ampscale * fixamp;
         }
         const a = parseFloat(controls.amp.n.value) * ampscale;
