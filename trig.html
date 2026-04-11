@@ -330,11 +330,11 @@
     window.onresize = resize;
     resize();
     window.addEventListener('load', () => {
-    // Get the updated viewport dimensions
-    originalwidth = window.innerWidth;
-    originalheight = window.innerHeight;
-    
-    console.log(`Document loaded: ${originalwidth}x${originalheight}`);
+        // Get the updated viewport dimensions
+        originalwidth = window.innerWidth;
+        originalheight = window.innerHeight;
+        window.scrollTo(0, 0);
+        console.log(`Document loaded: ${originalwidth}x${originalheight}`);
     });
     window.addEventListener('orientationchange', () => {
     // Get the updated viewport dimensions
