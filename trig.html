@@ -172,6 +172,8 @@
     let extralargeH = 640;
     let tabletlandscapeH = 1060;
     let tabletportraitH = 1300;
+    let laptoplandscapeH = 640;
+    let desktoplandscapeH = 940;
     let fixamp = 1.0;
     const mobileOrientationHeights = [700, 360];
     function resize() {
@@ -208,8 +210,13 @@
         }
 
         if (devicetype == 'desktop/laptop') {
-            h = canvas.height = extralargeH;
-            fixamp = ( extralargeH / mobileH);
+            if (originalheight < 700){
+                h = canvas.height = laptoplandscapeH;
+                fixamp = ( laptoplandscapeH / mobileH);
+            } else {
+                h = canvas.height = desktoplandscapeH;
+                fixamp = ( desktoplandscapeH / mobileH);
+            }
         }
 /*
         if (originalwidth < 680) {
