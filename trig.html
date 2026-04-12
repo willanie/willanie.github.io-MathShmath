@@ -73,6 +73,7 @@
 <div id="trigcontainer"; class="trigcontainer">
     <button class="custom-btn active"; id="SinButton" onclick="toggleActive(this)">SIN</button>
     <button class="custom-btn"; id="CosButton" onclick="toggleActive(this)">COS</button>
+    <button class="custom-btn"; id="TanButton" onclick="toggleActive(this)">TAN</button>
     <h2 id="trigformula"; style="color: #0bd40b; margin-top: 0; margin-bottom: 0;">Sin <i>f</i>(&theta;) =  A&sdot;sin(F&sdot;&theta; + P)</h2>
     <canvas id="graph"></canvas>
     <div id="wavecontrols"; class="controls">
@@ -118,7 +119,7 @@
 
     var activebutton = "SIN";
     function toggleActive(button) {
-        const buttonIds = ["SinButton", "CosButton"];
+        const buttonIds = ["SinButton", "CosButton", "TanButton"];
         buttonIds.forEach(id => {
             document.getElementById(id).style.backgroundColor = "#04AA6D";
         });
@@ -134,12 +135,17 @@
             activebutton = "COS";
             document.getElementById("trigformula").innerHTML = "Cos <i>f</i>(&theta;) =  A&sdot;cos(F&sdot;&theta; + P)";
             resize();
+        } else if (button.id == "TanButton") {
+            //console.log("COS button button clicked");
+            activebutton = "TAN";
+            document.getElementById("trigformula").innerHTML = "Tan <i>f</i>(&theta;) =  A&sdot;tan(F&sdot;&theta; + P)";
+            resize();
         }
     }
 
     const canvas = document.getElementById('graph');
     const ctx = canvas.getContext('2d');
-    console.log("early on ctxcanvaswidth=%d ctxcanvasheight=%d", ctx.canvas.width, ctx.canvas.height);
+    //console.log("early on ctxcanvaswidth=%d ctxcanvasheight=%d", ctx.canvas.width, ctx.canvas.height);
     const controls = {
         amp: { s: document.getElementById('ampSlider'), n: document.getElementById('ampInput') },
         freq: { s: document.getElementById('freqSlider'), n: document.getElementById('freqInput') },
@@ -156,8 +162,8 @@
     const freqInputheight = document.getElementById('freqcontrol').offsetHeight;
     const phaseInputheight = document.getElementById('phaseInput').offsetHeight;
     const navbarheight = document.getElementById('phaseInput').offsetHeight;
-    console.log("device=%s orientation=%s trigcontainerH=%d titleH=%d formulaH=%d sinbuttonH=%d", devicetype, orientation, trigcontainerheight, trigtitleheight, trigformulaheight, SinButtonheight);
-    console.log("wavecontrolsheight=%d ampInputheight=%d freqInputheight=%d phaseInputheight=%d navbarheight=%d", wavecontrolsheight, ampInputheight, freqInputheight, phaseInputheight, navbarheight);
+    //console.log("device=%s orientation=%s trigcontainerH=%d titleH=%d formulaH=%d sinbuttonH=%d", devicetype, orientation, trigcontainerheight, trigtitleheight, trigformulaheight, SinButtonheight);
+    //console.log("wavecontrolsheight=%d ampInputheight=%d freqInputheight=%d phaseInputheight=%d navbarheight=%d", wavecontrolsheight, ampInputheight, freqInputheight, phaseInputheight, navbarheight);
 
 
     const ampslider = document.getElementById('ampSlider');
@@ -178,18 +184,18 @@
     const mobileOrientationHeights = [700, 360];
     function resize() {
         const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-        console.log(isPortrait);
-        console.log(isPortrait ? "Portrait" : "Landscape");
+        //console.log(isPortrait);
+        //console.log(isPortrait ? "Portrait" : "Landscape");
         if (isPortrait) {
-            console.log("isPortrait=%s height chosen=%d", isPortrait, mobileOrientationHeights[1]);
+            //console.log("isPortrait=%s height chosen=%d", isPortrait, mobileOrientationHeights[1]);
         }
         else {
-            console.log("isPortrait=%s height chosen=%d", isPortrait, mobileOrientationHeights[0]);
+            //console.log("isPortrait=%s height chosen=%d", isPortrait, mobileOrientationHeights[0]);
         }
-        console.log("in resize before assignment canvaswidth=%d canvasheight=%d canvasoffsetWidth=%d", canvas.width, canvas.height, canvas.offsetWidth);
+        //console.log("in resize before assignment canvaswidth=%d canvasheight=%d canvasoffsetWidth=%d", canvas.width, canvas.height, canvas.offsetWidth);
         w = canvas.width = canvas.offsetWidth * 2;
         h = canvas.height = largerH;
-        console.log("originalwidth=%d originalheight=%d w=%d h=%d", originalwidth, originalheight, w, h);
+        //console.log("originalwidth=%d originalheight=%d w=%d h=%d", originalwidth, originalheight, w, h);
         if (devicetype == 'mobile'){
             if (orientation == 'Portrait'){
                 h = canvas.height = mobileH;
@@ -279,9 +285,9 @@
         const isPortrait = window.matchMedia("(orientation: portrait)").matches;
         // Sine Wave
         let ampscale = 17.9;
-        console.log("in draw isPortrait=%s canvaswidth=%d w=%d h=%d", isPortrait, canvas.width, w, h);
+        //console.log("in draw isPortrait=%s canvaswidth=%d w=%d h=%d", isPortrait, canvas.width, w, h);
         if (canvas.width > 600) {
-            console.log("in ampscale fix isPortrait=%s width=%d", isPortrait, w);
+            //console.log("in ampscale fix isPortrait=%s width=%d", isPortrait, w);
 /*
             let fixamp = ( largerH / mobileH);
             if (!isPortrait && h < 400 ) {
@@ -297,7 +303,7 @@
         const f = parseFloat(controls.freq.n.value) * 1.0;
         let p = 0;
         //console.log(activebutton);
-        if (activebutton == "SIN") {
+        if (activebutton == "SIN" || activebutton == "TAN") {
             //console.log("SIN button here");
             p = parseFloat(controls.phase.n.value) * 1.0;    
         } else {
@@ -318,9 +324,14 @@
             if (activebutton == "SIN") {
                 //console.log("inside sin side of if %s p=%f", activebutton, p);
                 y = h/2 + Math.sin((xUnit) + p) * a;
-            } else {
-                //console.log("inside cos side of if %s p=%f", activebutton, p);
+            }
+            if (activebutton == "COS") {
+                //console.log("inside sin side of if %s p=%f", activebutton, p);
                 y = h/2 + Math.cos((xUnit) + p) * a;
+            }
+            if (activebutton == "TAN") {
+                //console.log("inside sin side of if %s p=%f", activebutton, p);
+                y = h/2 + Math.tan((xUnit) + p) * (a/10.0);
             }
             x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
         }
@@ -334,7 +345,7 @@
         originalwidth = window.innerWidth;
         originalheight = window.innerHeight;
         //window.scrollTo(0, 0);
-        console.log(`Document loaded: ${originalwidth}x${originalheight}`);
+        //console.log(`Document loaded: ${originalwidth}x${originalheight}`);
     });
     window.addEventListener('orientationchange', () => {
     // Get the updated viewport dimensions
@@ -342,7 +353,7 @@
     originalwidth = window.innerWidth;
     originalheight = window.innerHeight;
     
-    console.log(`orientationchange called: ${originalwidth}x${originalheight}`);
+    //console.log(`orientationchange called: ${originalwidth}x${originalheight}`);
     });
 </script>
 </body>
