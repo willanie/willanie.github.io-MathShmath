@@ -6,14 +6,23 @@
     <link rel="stylesheet" href="style.css"> <!-- Link to your single CSS file -->
 </head>
 <body>
+    
     <nav class="navbar">
-        <a href="index.html"><span>&#x1F3E0;<br></span><span>Home</span></a>
-        <a href="trig.html"><span>&#x223F;<br></span><span>Trig</span></a>
-        <a href="credits.html"><span>&#x1F465;</span><span>Credits</span></a>
-        <a href="donuts.html" class="active"><span>&#x1F369;</span><span>Donuts</span></a>
+            <a id="HomeBTN"; href="index.html"><span>&#x1F3E0;<br></span><span>Home</span></a>
+            <a id="TrigBTN"; href="trig.html"><span>&#x223F;<br></span><span>Trig</span></a>
+            <a id="AlgebraBTN"; href="algebra.html"><span><strong>=</strong><br></span><span>Algebra</span></a>
+            <a id="CreditsBTN"; href="credits.html"><span>&#x1F465;</span><span>Credits</span></a>
+            <a id="DonutsBTN"; href="donuts.html" class="active"><span>&#x1F369;</span><span>Donuts</span></a>
     </nav>
+
     <h1 style="color: #ff00ff; text-align: center; font-weight: 900; margin-bottom: 0;">Donuts</h1>
     <p style="font-size: 400%; text-align: center;">&#127849; &#127849; &#127849;</p>
     <p style="color: #ffffff; text-align: center;">that's all there is here</p>
+
+    <script>
+        document.querySelector(".active")?.classList.remove("active");
+        document.querySelector("a#DonutsBTN").classList.add("active");
+    </script>
+
 </body>
 </html>
