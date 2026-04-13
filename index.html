@@ -6,12 +6,15 @@
     <link rel="stylesheet" href="style.css"> <!-- Link to your single CSS file -->
 </head>
 <body>
+    
     <nav class="navbar">
-        <a href="index.html" class="active"><span>&#x1F3E0;<br></span><span>Home</span></a>
-        <a href="trig.html"><span>&#x223F;<br></span><span>Trig</span></a>
-        <a href="credits.html"><span>&#x1F465;</span><span>Credits</span></a>
-        <a href="donuts.html"><span>&#x1F369;</span><span>Donuts</span></a>
+            <a id="HomeBTN"; href="index.html"><span>&#x1F3E0;<br></span><span>Home</span></a>
+            <a id="TrigBTN"; href="trig.html"><span>&#x223F;<br></span><span>Trig</span></a>
+            <a id="AlgebraBTN"; href="algebra.html"><span><strong>=</strong><br></span><span>Algebra</span></a>
+            <a id="CreditsBTN"; href="credits.html"><span>&#x1F465;</span><span>Credits</span></a>
+            <a id="DonutsBTN"; href="donuts.html" class="active"><span>&#x1F369;</span><span>Donuts</span></a>
     </nav>
+
     <h1 style="color: #ff00ff; text-align: center; font-weight: 900; margin-bottom: 0;">MathShmath</h1>
         <p style="color: #7e7e7e; text-align: center;" >is intended for people</p>
         <p style="color: #765ff8; text-align: center;">who kinda hate math.</p>
@@ -19,5 +22,11 @@
         <p style="color: #f09d04; text-align: center;">intermediate math <span style="color: red;">fun.</span></p>
         <p style="color: #0f7214; text-align: center;">Yeah, it's hard to believe</p>
         <p style="color: #ee1919; text-align: center;">that's possible.</p>
+
+    <script>
+        document.querySelector(".active")?.classList.remove("active");
+        document.querySelector("a#HomeBTN").classList.add("active");
+    </script>
+    
 </body>
 </html>
