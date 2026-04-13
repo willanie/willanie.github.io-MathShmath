@@ -6,18 +6,26 @@
     <link rel="stylesheet" href="style.css"> <!-- Link to your single CSS file -->
 </head>
 <body>
+    
     <nav class="navbar">
-        <a href="index.html"><span>&#x1F3E0;</span><span>Home</span></a>
-        <a href="trig.html"><span>&#x223F;</span><span>Trig</span></a></a>
-        <a href="credits.html" class="active"><span>&#x1F465;</span><span>Credits</span></a>
-        <a href="donuts.html"><span>&#x1F369;</span><span>Donuts</span></a>
+            <a id="HomeBTN"; href="index.html"><span>&#x1F3E0;<br></span><span>Home</span></a>
+            <a id="TrigBTN"; href="trig.html"><span>&#x223F;<br></span><span>Trig</span></a>
+            <a id="AlgebraBTN"; href="algebra.html"><span><strong>=</strong><br></span><span>Algebra</span></a>
+            <a id="CreditsBTN"; href="credits.html"><span>&#x1F465;</span><span>Credits</span></a>
+            <a id="DonutsBTN"; href="donuts.html" class="active"><span>&#x1F369;</span><span>Donuts</span></a>
     </nav>
+
         <h1 style="color: #ff00ff; text-align: center; font-weight: 900; margin-bottom: 0;">Credits</h1>
         <p style="color: #0bd40b; text-align: center;" >Website name credit goes to <span style="color: red;">Lauren Speers.</span></p>
-        <p style="color: #0bd40b;; text-align: center;">Content inspired by being a math tutor for her son <span style="color: rgb(0, 247, 255);">Judah.</span></p>
+        <p style="color: #0bd40b; text-align: center;">Content inspired by being a math tutor for her son <span style="color: rgb(0, 247, 255);">Judah.</span></p>
         <p style="color: #e07510; text-align: center;">The old guy who cobbled this website together is <span style="color: yellow;">me.</span></p>
         <p style="color: #b8b8b8; text-align: center;">Github supplied the means to build and serve this website.</p>
-        <p style="color: #b8b8b8; text-align: center;">Google Gemini helped with some starter html code and lots of questions.</p>
+        <p style="color: #b8b8b8; text-align: center;">Google Gemini helped with some starter html code and lots of suggestions.</p>
+
+    <script>
+        document.querySelector(".active")?.classList.remove("active");
+        document.querySelector("a#CreditsBTN").classList.add("active");
+    </script>
 
 </body>
 </html>
