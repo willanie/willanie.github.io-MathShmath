@@ -6,7 +6,7 @@ body {
     background-color: #101010;
 }
 h1 { font-size: clamp(1.5rem, 4.5vw + 1.5rem, 6.0vw); }
-p { font-size: clamp(1rem, 1.0vw + 1rem, 3.0vw); }
+p { font-size: clamp(1rem, 1.5vw + 1rem, 3.0vw); }
 .navbar {
     position: fixed;
     bottom: 2vh;
