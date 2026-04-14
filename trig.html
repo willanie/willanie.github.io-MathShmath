@@ -18,7 +18,7 @@
         .custom-btn.hover { background-color: #015f3d; }
 
         .custom-btn.active { background-color: #ff0000; }
-        .trigcontainer {
+        .algebracontainer {
             /* background: #f30404; */
             width: 90vw;
             height: 68vh;
@@ -71,37 +71,39 @@
             <a id="DonutsBTN"; href="donuts.html" class="active"><span>&#x1F369;</span><span>Donuts</span></a>
     </nav>
 
-    <h1 id="trigtitle"; style="color: #ff00ff; text-align: center; font-weight: 900; margin-bottom: 0; font-size: 0.8rem;">Trig Starter</h1>
+    <h1 id="algebratitle"; style="color: #ff00ff; text-align: center; font-weight: 900; margin-bottom: 0; font-size: 0.8rem;">Algebra Starter</h1>
 
-<div id="trigcontainer"; class="trigcontainer">
-    <button class="custom-btn active"; id="SinButton" onclick="toggleActive(this)">SIN</button>
+<div id="algebracontainer"; class="algebracontainer">
+    <button class="custom-btn active"; id="PowButton" onclick="toggleActive(this)">POW</button>
     <button class="custom-btn"; id="CosButton" onclick="toggleActive(this)">COS</button>
     <button class="custom-btn"; id="TanButton" onclick="toggleActive(this)">TAN</button>
-    <h2 id="trigformula"; style="color: #0bd40b; margin-top: 0; margin-bottom: 0;">Sin <i>f</i>(&theta;) =  A&sdot;sin(F&sdot;&theta; + P)</h2>
+    <h2 id="algebraformula"; style="color: #0bd40b; margin-top: 0; margin-bottom: 0;">Pow <i>f</i>(<i>x</i>) =  Value<sup>x</sup> + 1.0</h2>
     <canvas id="graph"></canvas>
     <div id="wavecontrols"; class="controls">
-        <div  id="ampcontrol"; class="control-group">
-            <label style="color: white;">Amp</label>
-            <input type="range" id="ampSlider" min="0" max="10" value="10">
-            <input type="number" id="ampInput" value="10">
+        <div  id="valuecontrol"; class="control-group">
+            <label style="color: white;">Value</label>
+            <input type="range" id="valueSlider" min="0.1" max="3" step="0.01" value="2.0">
+            <input type="number" id="valueInput" value="2.0">
         </div>
-        <div id="freqcontrol"; class="control-group">
-            <label style="color: white;">Freq</label>
-            <input type="range" id="freqSlider" min="1" max="20" step="0.1" value="1">
-            <input type="number" id="freqInput" value="1">
+        <div id="rangecontrol"; class="control-group">
+            <label style="color: white;">Range</label>
+            <input type="range" id="rangeSlider" min="0.2" max="60" step="0.01" value="14">
+            <input type="number" id="rangeInput" value="14">
         </div>
+        <!--
         <div  id="phasecontrol"; class="control-group">
             <label style="color: white;">Phase</label>
             <input type="range" id="phaseSlider" min="0" max="20" step="0.1" value="0">
             <input type="number" id="phaseInput" value="0">
         </div>
+        -->
     </div>
 </div>
 
 <script>
 
-    document.querySelector(".active")?.classList.remove("active");
-    document.querySelector("a#TrigBTN").classList.add("active");
+        document.querySelector(".active")?.classList.remove("active");
+        document.querySelector("a#AlgebraBTN").classList.add("active");
 
     function getDeviceType() {
         const width = window.innerWidth;
@@ -124,28 +126,28 @@
     }
 
 
-    var activebutton = "SIN";
+    var activebutton = "POW";
     function toggleActive(button) {
-        const buttonIds = ["SinButton", "CosButton", "TanButton"];
+        const buttonIds = ["PowButton", "CosButton", "TanButton"];
         buttonIds.forEach(id => {
             document.getElementById(id).style.backgroundColor = "#04AA6D";
         });
         button.classList.toggle('active');
         button.style.backgroundColor = "#ff0000";
-        if (button.id == "SinButton") {
-            //console.log("SIN button clicked");
-            activebutton = "SIN";
-            document.getElementById("trigformula").innerHTML = "Sin <i>f</i>(&theta;) =  A&sdot;sin(F&sdot;&theta; + P)";
+        if (button.id == "PowButton") {
+            //console.log("POW button clicked");
+            activebutton = "POW";
+            document.getElementById("algebraformula").innerHTML = "Sin <i>f</i>(&theta;) =  A&sdot;sin(F&sdot;&theta; + P)";
             resize();
         } else if (button.id == "CosButton") {
             //console.log("COS button button clicked");
             activebutton = "COS";
-            document.getElementById("trigformula").innerHTML = "Cos <i>f</i>(&theta;) =  A&sdot;cos(F&sdot;&theta; + P)";
+            document.getElementById("algebraformula").innerHTML = "Cos <i>f</i>(&theta;) =  A&sdot;cos(F&sdot;&theta; + P)";
             resize();
         } else if (button.id == "TanButton") {
             //console.log("COS button button clicked");
             activebutton = "TAN";
-            document.getElementById("trigformula").innerHTML = "Tan <i>f</i>(&theta;) =  A&sdot;tan(F&sdot;&theta; + P)";
+            document.getElementById("algebraformula").innerHTML = "Tan <i>f</i>(&theta;) =  A&sdot;tan(F&sdot;&theta; + P)";
             resize();
         }
     }
@@ -154,28 +156,33 @@
     const ctx = canvas.getContext('2d');
     //console.log("early on ctxcanvaswidth=%d ctxcanvasheight=%d", ctx.canvas.width, ctx.canvas.height);
     const controls = {
-        amp: { s: document.getElementById('ampSlider'), n: document.getElementById('ampInput') },
-        freq: { s: document.getElementById('freqSlider'), n: document.getElementById('freqInput') },
-        phase: { s: document.getElementById('phaseSlider'), n: document.getElementById('phaseInput') }
+        amp: { s: document.getElementById('valueSlider'), n: document.getElementById('valueInput') },
+        freq: { s: document.getElementById('rangeSlider'), n: document.getElementById('rangeInput') },
+        //phase: { s: document.getElementById('phaseSlider'), n: document.getElementById('phaseInput') }
     };
     const devicetype = getDeviceType();
     const orientation = getDeviceOrientation();
-    const trigtitleheight = document.getElementById('trigtitle').offsetHeight;
-    const trigformulaheight = document.getElementById('trigformula').offsetHeight;
-    const SinButtonheight = document.getElementById('SinButton').offsetHeight;
-    const trigcontainerheight = document.getElementById('trigcontainer').offsetHeight;
+    const algebratitleheight = document.getElementById('algebratitle').offsetHeight;
+    const algebraformulaheight = document.getElementById('algebraformula').offsetHeight;
+    const PowButtonheight = document.getElementById('PowButton').offsetHeight;
+    const algebracontainerheight = document.getElementById('algebracontainer').offsetHeight;
     const wavecontrolsheight = document.getElementById('wavecontrols').offsetHeight;
-    const ampInputheight = document.getElementById('ampcontrol').offsetHeight;
-    const freqInputheight = document.getElementById('freqcontrol').offsetHeight;
-    const phaseInputheight = document.getElementById('phaseInput').offsetHeight;
-    const navbarheight = document.getElementById('phaseInput').offsetHeight;
-    //console.log("device=%s orientation=%s trigcontainerH=%d titleH=%d formulaH=%d sinbuttonH=%d", devicetype, orientation, trigcontainerheight, trigtitleheight, trigformulaheight, SinButtonheight);
-    //console.log("wavecontrolsheight=%d ampInputheight=%d freqInputheight=%d phaseInputheight=%d navbarheight=%d", wavecontrolsheight, ampInputheight, freqInputheight, phaseInputheight, navbarheight);
+    const valueInputheight = document.getElementById('valuecontrol').offsetHeight;
+    const rangeInputheight = document.getElementById('rangecontrol').offsetHeight;
+    //const phaseInputheight = document.getElementById('phaseInput').offsetHeight;
+    //const navbarheight = document.getElementById('phaseInput').offsetHeight;
+    //console.log("device=%s orientation=%s algebracontainerH=%d titleH=%d formulaH=%d PowButtonH=%d", devicetype, orientation, algebracontainerheight, algebratitleheight, algebraformulaheight, PowButtonheight);
+    //console.log("wavecontrolsheight=%d valueInputheight=%d rangeInputheight=%d phaseInputheight=%d navbarheight=%d", wavecontrolsheight, valueInputheight, rangeInputheight, phaseInputheight, navbarheight);
 
 
-    const ampslider = document.getElementById('ampSlider');
-    const ampmax = ampslider.max;
-    //console.log("amp max=%d", ampmax);
+    const valueSlider = document.getElementById('valueSlider');
+    const valuemax = valueSlider.max;
+    const rangeSlider = document.getElementById('rangeSlider');
+    const rangemax = rangeSlider.max;
+    const valueValueLabel = document.getElementById('valueValue');
+    const rangeValueLabel = document.getElementById('rangeValue');
+
+    //console.log("amp max=%d", valuemax);
     let originalwidth = document.documentElement.clientWidth;
     let originalheight = document.documentElement.clientHeight;
     let w, h;
@@ -231,27 +238,7 @@
                 fixamp = ( desktoplandscapeH / mobileH);
             }
         }
-/*
-        if (originalwidth < 680) {
-            console.log("width less than 680 w=%d", originalwidth);
-            if (isPortrait) {
-                h = canvas.height = largerH;
-                console.log("got in here portrait h=%d", h);
-            } else {
-                h = canvas.height = mobilelandscapeH;
-                console.log("still mobile not portrait h=%d", h);
-            }
-        } else {
-            console.log("width greater than 680 w=%d", originalwidth);
-            if (isPortrait) {
-                h = canvas.height = extralargeH;
-                console.log("got in here portrait h=%d", h);
-            } else {
-                h = canvas.height = extralargeH;
-                console.log("still mobile not portrait h=%d", h);
-            }
-        }
-*/
+
         draw();
     }
 
@@ -264,11 +251,31 @@
     Object.keys(controls).forEach(key => {
         controls[key].s.oninput = (e) => update(key, e.target.value);
         controls[key].n.oninput = (e) => update(key, e.target.value);
+        //console.log(key);
     });
+
+    //console.log(Object.keys(controls));
 
     function draw() {
         ctx.clearRect(0, 0, w, h);
         
+        // Draw main axes thicker
+        ctx.strokeStyle = '#ff0000';
+        ctx.beginPath();
+        const originhalfX = w / 2.0;
+        const originY = h / 2;
+        const originX = w / 2;
+
+        // Y Axis
+        ctx.moveTo(originhalfX, 0);
+        ctx.lineTo(originhalfX, h);
+        ctx.stroke();
+
+        // X Axis
+        ctx.moveTo(originX, originY);
+        ctx.lineTo(w , originY);
+        ctx.stroke();
+
         // Grid & Labels
         ctx.strokeStyle = '#4a4a4a';
         ctx.lineWidth = 5;
@@ -282,67 +289,91 @@
         }
 
         // horizontal lines
-        for(let i = 0; i <= 6; i++) {
-            let y = (h/6) * i;
-            let num = 10 - ((ampmax / 3) * i);
+        //console.log("rangemax=%f", rangemax);
+        const stepynums = h/20;
+        let y = h + stepynums;
+        for(let i = -10; i <= 10; i++) {
+            y = y - stepynums;
+            //let num = ((rangemax / 2) * i);
+            let num = i;
             ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
             //ctx.fillText(Math.round(h/2 - y), 10, y - 10);
-            ctx.fillText(Math.round(num), 10, y - 10);
+            ctx.fillText(Math.round(num), 30, y - 10);
+            //console.log("roundnum=%d y=%d", Math.round(num), (y - 10));
         }
+
+
+            
         const isPortrait = window.matchMedia("(orientation: portrait)").matches;
         // Sine Wave
-        let ampscale = 17.9;
+        let ampscale = 0.5;
         //console.log("in draw isPortrait=%s canvaswidth=%d w=%d h=%d", isPortrait, canvas.width, w, h);
         if (canvas.width > 600) {
             //console.log("in ampscale fix isPortrait=%s width=%d", isPortrait, w);
-/*
-            let fixamp = ( largerH / mobileH);
-            if (!isPortrait && h < 400 ) {
-                fixamp = 1.0 * ( mobilelandscapeH / mobileH);
-                console.log("got here fixamp=%f", fixamp);
-            } else {
-                fixamp = 1.0 * ( extralargeH / mobileH);
-            }
-*/
+
             ampscale = ampscale * fixamp;
         }
         const a = parseFloat(controls.amp.n.value) * ampscale;
         const f = parseFloat(controls.freq.n.value) * 1.0;
         let p = 0;
         //console.log(activebutton);
-        if (activebutton == "SIN" || activebutton == "TAN") {
-            //console.log("SIN button here");
-            p = parseFloat(controls.phase.n.value) * 1.0;    
+        if (activebutton == "POW" || activebutton == "TAN") {
+            //console.log("POW button here");
+            //p = parseFloat(controls.phase.n.value) * 1.0;    
         } else {
             //console.log("COS button here");
-            p = (parseFloat(controls.phase.n.value) * 1.0) + Math.PI;
+            //p = (parseFloat(controls.phase.n.value) * 1.0) + Math.PI;
         }
-        
-        const step = f * ((2.0 * Math.PI) / w);
-        //console.log("w=%f freq=%f phase=%f step=%f PI=%f", w,f,p,step, Math.PI);
+
+        ctx.strokeStyle = '#ffffff';
+
+
+        // Y Axis
+        ctx.beginPath();
+        ctx.moveTo(w/2, 0);
+        ctx.lineTo(w/2, h);
+        ctx.stroke();
+        // X Axis
+        ctx.moveTo(0, h/2);
+        ctx.lineTo(w , h/2);
+        ctx.stroke();
+
+        const halfw = w / 2;
+        const step = f / w;
+        const scaleY = h / 120; // 5 units up, 5 units down
+        const stepy = h / 20;
+        //console.log("w=%f value=%f range=%f step=%f", w,a,f,step);
 
         ctx.beginPath();
         ctx.strokeStyle = '#00ffcc';
-        ctx.lineWidth = 5;
-        for (let x = 0; x < w; x++) {
-            const xUnit = x * step;
+        ctx.lineWidth = 8;
+        for (let x = 0; x < w; x += 8) {
+            //const xUnit = -halfw + (x * step);
+            const xUnit = ((x - halfw) * step);
             let y = 0;
             //console.log("inside %s", activebutton);
-            if (activebutton == "SIN") {
+            if (activebutton == "POW") {
                 //console.log("inside sin side of if %s p=%f", activebutton, p);
-                y = h/2 + Math.sin((xUnit) + p) * a;
+                //y = h/2 + Math.sin((xUnit) + p) * a;
+                y = (h/2 + (scaleY * Math.pow(a,xUnit) + stepy) * -1.0) ;
+                //console.log("halfw=%f step=%f h=%d a=%f xUnit=%f y=%f",halfw, step, h, a, xUnit, y);
             }
             if (activebutton == "COS") {
                 //console.log("inside sin side of if %s p=%f", activebutton, p);
                 y = h/2 + Math.cos((xUnit) + p) * a;
-                console.log("inside COS side xunit=%f y=%f", xUnit, y);
+                //console.log("inside COS side xunit=%f y=%f", xUnit, y);
             }
             if (activebutton == "TAN") {
                 //console.log("inside sin side of if %s p=%f", activebutton, p);
                 y = h/2 + Math.tan((xUnit) + p) * (a/10.0);
-                console.log("inside TAN side xunit=%f y=%f", xUnit, y);
+                //console.log("inside TAN side xunit=%f y=%f", xUnit, y);
             }
-            x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+            if (x === 0) {
+                ctx.moveTo(x, y);
+            } else if (x > 0) {
+                ctx.lineTo(x, y);
+            }
+            //x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
         }
         ctx.stroke();
     }
@@ -356,14 +387,16 @@
         //window.scrollTo(0, 0);
         //console.log(`Document loaded: ${originalwidth}x${originalheight}`);
     });
+
     window.addEventListener('orientationchange', () => {
     // Get the updated viewport dimensions
     location.reload();
     originalwidth = window.innerWidth;
     originalheight = window.innerHeight;
+
+    });
     
     //console.log(`orientationchange called: ${originalwidth}x${originalheight}`);
-    });
 </script>
 </body>
 </html>
