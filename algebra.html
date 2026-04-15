@@ -76,7 +76,7 @@
 <div id="algebracontainer"; class="algebracontainer">
     <button class="custom-btn active"; id="PowButton" onclick="toggleActive(this)">POW</button>
     <button class="custom-btn"; id="ParaButton" onclick="toggleActive(this)">PARA</button>
-    <button class="custom-btn"; id="TanButton" onclick="toggleActive(this)">TAN</button>
+    <button class="custom-btn"; id="ElipButton" onclick="toggleActive(this)">HEART</button>
     <h2 id="algebraformula"; style="color: #0bd40b; margin-top: 0; margin-bottom: 0;">Pow <i>f</i>(<i>x</i>) =  Value<sup>x</sup> + 1.0</h2>
     <canvas id="graph"></canvas>
     <div id="wavecontrols"; class="controls">
@@ -105,6 +105,17 @@
         document.querySelector(".active")?.classList.remove("active");
         document.querySelector("a#AlgebraBTN").classList.add("active");
 
+    function getHeartY(x, A, B) {
+        const absX = Math.abs(x);
+        const common = B * Math.sqrt(absX);
+        const inner = Math.sqrt(1 - x * x);
+
+        return {
+            top: -((common + inner) / A),
+            bottom: -((common - inner) / A)
+        };
+    }
+
     function getDeviceType() {
         const width = window.innerWidth;
         const height = window.innerHeight;
@@ -128,7 +139,9 @@
 
     var activebutton = "POW";
     function toggleActive(button) {
-        const buttonIds = ["PowButton", "ParaButton", "TanButton"];
+        console.log("toggleActive toggle called")
+        //console.log(button);
+        const buttonIds = ["PowButton", "ParaButton", "ElipButton"];
         buttonIds.forEach(id => {
             document.getElementById(id).style.backgroundColor = "#04AA6D";
         });
@@ -138,20 +151,49 @@
             //console.log("POW button clicked");
             activebutton = "POW";
             document.getElementById("algebraformula").innerHTML = "Pow <i>f</i>(<i>x</i>) =  Value<sup>x</sup> + 1.0";
-            document.getElementById("valueLabel").textContent = "Value";
+            document.getElementById("valueLabel").textContent = "xValue";
             document.getElementById("rangeLabel").textContent = "Range";
+            document.getElementById("valueSlider").value = "2.0";
+            document.getElementById("valueInput").value = "2.0";
+            
+            document.getElementById("valueSlider").min = "0.1";
+            document.getElementById("valueSlider").msx = "3.0";
+
+            document.getElementById("rangeSlider").min = "0.2";
+            document.getElementById("rangeSlider").max = "60";
+            document.getElementById("rangeSlider").value = "14";
+            document.getElementById("rangeInput").value = "14";
             resize();
         } else if (button.id == "ParaButton") {
             //console.log("PARA button button clicked");
             activebutton = "PARA";
-            document.getElementById("algebraformula").innerHTML = "<i>f</i>(<i>x</i>) =  A&sdot;<i>x</i><sup>2</sup> + B";
+            document.getElementById("algebraformula").innerHTML = "Parabola <i>f</i>(<i>x</i>) =  A&sdot;<i>x</i><sup>2</sup> + B";
             document.getElementById("valueLabel").textContent = "A";
             document.getElementById("rangeLabel").textContent = "B";
+            document.getElementById("valueSlider").value = "2.0";
+            document.getElementById("valueInput").value = "2.0";
+
+            document.getElementById("valueSlider").min = "0.1";
+            document.getElementById("valueSlider").msx = "3.0";
+
+            document.getElementById("rangeSlider").max = "60";
+            document.getElementById("rangeSlider").min = "0.2";
+            document.getElementById("rangeSlider").value = "14";
+            document.getElementById("rangeInput").value = "14";
             resize();
-        } else if (button.id == "TanButton") {
-            //console.log("TAN button button clicked");
-            activebutton = "TAN";
-            document.getElementById("algebraformula").innerHTML = "Tan <i>f</i>(&theta;) =  A&sdot;tan(F&sdot;&theta; + P)";
+        } else if (button.id == "ElipButton") {
+            //console.log("HEART button button clicked");
+            activebutton = "HEART";
+            document.getElementById("algebraformula").innerHTML = "<span ><i>f</i>(<i>x</i>) =  ( B &sdot; &radic;&vert;<i>x</i>&vert;</span><span> &plus; (1 - <i>x</i><sup>2</sup> ) ) &divide; A</span>";
+            document.getElementById("valueLabel").textContent = "A";
+            document.getElementById("rangeLabel").textContent = "B";
+            document.getElementById("valueSlider").value = "1.55";
+            document.getElementById("valueInput").value = "1.55";
+            document.getElementById("valueSlider").min = "0.3";
+
+            document.getElementById("rangeSlider").max = "1.5";
+            document.getElementById("rangeSlider").value = "0.47";
+            document.getElementById("rangeInput").value = "0.8";
             resize();
         }
     }
@@ -321,7 +363,7 @@
         const f = parseFloat(controls.freq.n.value) * 1.0;
         let p = 0;
         //console.log(activebutton);
-        if (activebutton == "POW" || activebutton == "TAN") {
+        if (activebutton == "POW" || activebutton == "HEART") {
             //console.log("POW button here");
             //p = parseFloat(controls.phase.n.value) * 1.0;    
         } else {
@@ -343,6 +385,7 @@
         ctx.stroke();
 
         const halfw = w / 2;
+        const halfh = h / 2;
         const step = f / w;
         const scaleY = h / 120; // 5 units up, 5 units down
         const stepy = h / 20;
@@ -351,39 +394,62 @@
         ctx.beginPath();
         ctx.strokeStyle = '#00ffcc';
         ctx.lineWidth = 8;
-        for (let x = 0; x < w; x += 8) {
-            //const xUnit = -halfw + (x * step);
-            const xUnit = ((x - halfw) * step);
-            let y = 0;
-            let xoffset = 0;
-            //console.log("inside %s", activebutton);
-            if (activebutton == "POW") {
-                //console.log("inside sin side of if %s p=%f", activebutton, p);
-                //y = h/2 + Math.sin((xUnit) + p) * a;
-                y = (h/2 + (scaleY * Math.pow(a,xUnit) + stepy) * -1.0) ;
-                //console.log("halfw=%f step=%f h=%d a=%f xUnit=%f y=%f",halfw, step, h, a, xUnit, y);
+        if (activebutton == "POW" || activebutton == "PARA" ) {
+            for (let x = 0; x < w; x += 8) {
+                //const xUnit = -halfw + (x * step);
+                const xUnit = ((x - halfw) * step);
+                let y = 0;
+                let xoffset = 0;
+                //console.log("inside %s", activebutton);
+                if (activebutton == "POW") {
+                    //console.log("inside sin side of if %s p=%f", activebutton, p);
+                    //y = h/2 + Math.sin((xUnit) + p) * a;
+                    y = (h/2 + (scaleY * Math.pow(a,xUnit) + stepy) * -1.0) ;
+                    //console.log("halfw=%f step=%f h=%d a=%f xUnit=%f y=%f",halfw, step, h, a, xUnit, y);
+                }
+                if (activebutton == "PARA") {
+                    //console.log("inside sin side of if %s p=%f", activebutton, p);
+                    y = h/2 + (a * Math.pow(xUnit, 2 )) + f * xUnit;
+                    y = h/2 + (a * Math.pow(xUnit, 2 )) - (f * stepy * 0.16);
+                    xoffset = 0;
+                    //console.log("inside PARA side xunit=%f y=%f a=%f f=%f", xUnit, y, a, f);
+                }
+
+                if (x === 0) {
+                    ctx.moveTo(x + xoffset, y);
+                } else if (x > 0) {
+                    ctx.lineTo(x + xoffset, y);
+                }
+
             }
-            if (activebutton == "PARA") {
-                //console.log("inside sin side of if %s p=%f", activebutton, p);
-                y = h/2 + (a * Math.pow(xUnit, 2 )) + f * xUnit;
-                y = h/2 + (a * Math.pow(xUnit, 2 )) - (f * stepy * 0.16);
-                xoffset = 0;
-                console.log("inside PARA side xunit=%f y=%f a=%f f=%f", xUnit, y, a, f);
+                //x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+                
+            } else if (activebutton == "HEART") {
+                    
+                    // Plotting using x from -1 to 1
+                for (let x = -1; x <= 1; x += 0.01) {
+                    //let yTop = Math.sqrt(Math.abs(x)) + Math.sqrt(1 - x * x);
+                    //let yBottom = Math.sqrt(Math.abs(x)) - Math.sqrt(1 - x * x);
+                    const  xUnit = (((x * halfw * 0.5) + halfw));
+                    let yFunc = getHeartY(x, a, f);
+                    let yTop = (yFunc.top * halfh) + halfh + stepy * 2;
+                    let yBottom = yFunc.bottom;
+                    //console.log("h=%f halfw=%f x=%f yTop=%f", h, halfw, x, yTop);
+                    if (x === -1) ctx.moveTo(xUnit + ( halfw * 0.006 ), yTop + ( halfh * 0.097 ));
+                    else ctx.lineTo(xUnit, yTop);
+                }
+                for (let x = 1; x >= -1; x -= 0.01) {
+                    const  xUnit = (((x * halfw * 0.5) + halfw));
+                    //let yBottom = Math.sqrt(Math.abs(x)) - Math.sqrt(1 - x * x);
+                    let yFunc = getHeartY(x, a, f);
+                    let yBottom = (yFunc.bottom * halfh) + halfh + stepy * 2;
+                    ctx.lineTo(xUnit, yBottom );
+                }
+                
             }
-            if (activebutton == "TAN") {
-                //console.log("inside sin side of if %s p=%f", activebutton, p);
-                y = h/2 + Math.tan((xUnit) + p) * (a/10.0);
-                //console.log("inside TAN side xunit=%f y=%f", xUnit, y);
-            }
-            if (x === 0) {
-                ctx.moveTo(x + xoffset, y);
-            } else if (x > 0) {
-                ctx.lineTo(x + xoffset, y);
-            }
-            //x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-        }
-        ctx.stroke();
+            ctx.stroke();
     }
+    
 
     window.onresize = resize;
     resize();
