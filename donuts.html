@@ -3,7 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css"> <!-- Link to your single CSS file -->
+    <link rel="stylesheet" href="style.css"> <!-- Link to CSS file -->
+
+    <style>
+        .custom-btn {
+        background-color: #04AA6D; /* Green background */
+        border: 3px;
+        color: white;
+        padding: 0.6vw 1.2vw;
+        text-align: center;
+        font-size: 2vw;
+        cursor: pointer;
+        border-radius: 6px; /* Rounded corners */
+        }
+        .custom-btn.hover { background-color: #015f3d; }
+
+        .custom-btn.active { background-color: #ff0000; }
+        .trigcontainer {
+            /* background: #f30404; */
+            width: 90vw;
+            height: 68vh;
+            /* max-width: 760px;
+            max-height: 500px; */
+            text-align: center;
+            margin: 0 auto;
+            /* height: -webkit-fill-available; */
+        }
+        canvas {
+            background: #1e1e1e;
+            border-radius: 4px;
+            width: 30%;
+            aspect-ratio: 1 / 1;
+            height: auto;
+            border: 1px solid #333;
+        }
+        .controls {
+            margin-top: 2px;
+            display: grid;
+            gap: 4px;
+        }
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #252525;
+            padding: 4px;
+            border-radius: 8px;
+        }
+        label { font-size: 0.8rem; font-weight: 600; color: #888; width: 40px; text-align: left; }
+        input[type="number"] {
+            width: 55px;
+            background: #222222;
+            border: 1px solid #444;
+            color: #00ffcc;
+            padding: 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        input[type="range"] { flex-grow: 1; accent-color: #00ffcc; }
+    </style>
 </head>
 <body>
     
@@ -15,13 +73,354 @@
             <a id="DonutsBTN"; href="donuts.html" class="active"><span>&#x1F369;</span><span>Donuts</span></a>
     </nav>
 
+    
     <h1 style="color: #ff00ff; text-align: center; font-weight: 900; margin-bottom: 0;">Donuts</h1>
-    <p style="font-size: 400%; text-align: center;">&#127849; &#127849; &#127849;</p>
-    <p style="color: #ffffff; text-align: center;">that's all there is here</p>
+    <p style="font-size: 100%; text-align: center; margin-top: 0; margin-bottom: 0;">&#127849; &#127849; &#127849;</p>
+
+    
+
+    <h1 id="trigtitle"; style="color: #ff00ff; text-align: center; font-weight: 900; margin-bottom: 0; font-size: 0.8rem;">Animated Torus</h1>
+    <div id="trigcontainer"; class="trigcontainer">
+        <button class="custom-btn active"; id="ResetButton" onclick="toggleActive(this)">RESET</button>
+        <h2 id="trigformula"; style="color: #0bd40b; margin-top: 0; margin-bottom: 0;">Torus built with Sin and Cos</h2>
+        <canvas id="torusCanvas"></canvas>
+        <div id="wavecontrols"; class="controls">
+            <div  id="deltaXcontrol"; class="control-group">
+                <label style="color: white;">deltaX</label>
+                <input type="range" id="deltaXSlider" min="-20" max="20" step="2.0" value="0">
+                <input type="number" id="deltaXInput" value="0">
+            </div>
+            <div id="deltaYcontrol"; class="control-group">
+                <label style="color: white;">deltaY</label>
+                <input type="range" id="deltaYSlider" min="-20" max="20" step="2.0" value="0">
+                <input type="number" id="deltaYInput" value="0">
+            </div>
+
+            <div  id="Slicecontrol"; class="control-group">
+                <label style="color: white;">Slice</label>
+                <input type="range" id="sliceSlider" min="-255" max="145" step="1" value="-255">
+                <input type="number" id="sliceInput" value="-255">
+            </div>
+
+        </div>
+    </div>
 
     <script>
         document.querySelector(".active")?.classList.remove("active");
         document.querySelector("a#DonutsBTN").classList.add("active");
+        //console.log("starting script part")
+        // Canvas setup
+        const canvas = document.getElementById('torusCanvas');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+        const originX = width / 2;
+        const originY = height / 2;
+        const graphWidth = width - originX - 20;
+        const graphHeight = height - 40;
+        const scaleY = graphHeight / 10; // 5 units up, 5 units down
+
+        // --- Configuration ---
+        const CANVAS_ID = 'torusCanvas';
+        const R1 = 100; // Major radius
+        const R2 = 50;  // Minor radius
+        const slices = 50; // Number of segments for smoothness
+        const loops = 60;  // Number of points per segment
+        const fieldOfView = 1500; // For perspective projection
+        const canvasWidth = width;
+        const canvasHeight = height;
+
+       // --- Core 3D Mathematics Functions (from scratch) ---
+
+        // Basic 3D Point class
+        class Point3D {
+            constructor(x, y, z) {
+                this.x = x;
+                this.y = y;
+                this.z = z;
+                this.restX = x;
+                this.restY = y;
+                this.restZ = z;
+                this.projectedX = 0;
+                this.projectedY = 0;
+                this.size = 0;
+            }
+
+            // Project 3D point to 2D canvas coordinates
+            project(viewDistance) {
+                // Perspective projection: x/z, y/z
+                const scale = fieldOfView / (viewDistance - this.z);
+                this.projectedX = (this.x * scale) + canvasWidth / 2;
+                this.projectedY = (this.y * scale) + canvasHeight / 2;
+                this.size = scale * 20; // Size scales with depth
+            }
+        }
+
+        // Basic 4x4 Matrix operations (simplified for rotation and perspective)
+        function rotateX(p, angle) {
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+            const y = p.y * cos - p.z * sin;
+            const z = p.y * sin + p.z * cos;
+            p.y = y;
+            p.z = z;
+        }
+
+        function rotateY(p, angle) {
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+            const x = p.x * cos + p.z * sin;
+            const z = p.z * cos - p.x * sin;
+            p.x = x;
+            p.z = z;
+        }
+
+        function rotateZ(p, angle) {
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+            const x = p.x * cos - p.y * sin;
+            const y = p.x * sin + p.y * cos;
+            p.x = x;
+            p.y = y;
+        }
+
+        // --- Applet Logic ---
+        //const canvas = document.getElementById(CANVAS_ID);
+        //const ctx = canvas.getContext('2d');
+        const points = [];
+        let rotationAngleX = 0;
+        let rotationAngleY = 0;
+        const viewDistance = 2050; // Camera distance
+
+        function normalizeToZeroOne(value, oldValMin, oldValMax) {
+            // Ensure oldValMax is not equal to oldValMin to avoid division by zero
+            if (oldValMin === oldValMax) {
+                return value === oldValMin ? 1 : 0; // Handle single-point range, return 1 if value matches min/max
+            }
+
+            const normalized = (value - oldValMin) / (oldValMax - oldValMin);
+
+            // Clamp the result between 0 and 1 to handle values outside the original range gracefully
+            return Math.max(0, Math.min(1, normalized)); 
+        }
+
+        // Generate the torus vertices
+        function generateTorus() {
+            //console.log("in generateTorus");
+            for (let i = 0; i < slices; i++) {
+                const sliceAngle = (i / slices) * Math.PI * 2;
+                for (let j = 0; j < loops; j++) {
+                    const loopAngle = (j / loops) * Math.PI * 2;
+
+                    // Torus parametric equations
+                    const x = (R1 + R2 * Math.cos(sliceAngle)) * Math.cos(loopAngle);
+                    const y = 0.62 * (R1 + R2 * Math.cos(sliceAngle)) * Math.sin(loopAngle);
+                    const z = R2 * Math.sin(sliceAngle);
+
+                    points.push(new Point3D(x, y, z));
+                }
+            }
+        }
+        //console.log("just before get");
+        //console.log(document.getElementById('deltaXSlider'));
+        // Control elements
+        const deltaXSlider = document.getElementById('deltaXSlider');
+        const deltaYSlider = document.getElementById('deltaYSlider');
+        const sliceSlider = document.getElementById('sliceSlider');
+        const deltaXValueLabel = document.getElementById('deltaXInput');
+        const deltaYValueLabel = document.getElementById('deltaYInput');
+        const sliceValueLabel = document.getElementById('sliceInput');
+
+        // Initial Parameters
+        let deltaX = parseFloat(deltaXSlider.value);
+        let deltaY = parseFloat(deltaYSlider.value);
+        let slice = parseFloat(sliceSlider.value);
+        //let slice = 0;
+
+        function drawTorus() {
+            // Clear canvas
+            ctx.fillStyle = '#000';
+            ctx.clearRect(0, 0, width, height);
+            
+            const sortedPoints = [...points]; // Copy points for sorting
+            const sortedPointsSize = sortedPoints.length;
+            //console.log("npoints=%d", sortedPointsSize)
+
+            // Apply rotations
+            sortedPoints.forEach(p => {
+                rotateX(p, rotationAngleX);
+                rotateY(p, rotationAngleY);
+                p.project(viewDistance);
+            });
+
+            //console.log(`deltaX: ${deltaX}  deltaY: ${deltaY}  sortedPointsSize: ${sortedPointsSize}`);
+
+            // Draw points
+            //const pcolor = `rgba(255, 255, 255, 1.0)`;
+            //const palpha = 1.0;
+            for (let i = 0; i < sortedPointsSize; i++) {
+                const p = sortedPoints[i];
+                if (p.restY > slice) {
+                    palpha =  normalizeToZeroOne(p.size, 2, 10);
+                    pcolor = `rgba(255, ${p.projectedX * 0.6}, ${p.projectedY * 0.6}, ${palpha})`;
+                    ctx.fillStyle = pcolor;
+                    ctx.beginPath();
+                    ctx.arc(p.projectedX, p.projectedY, Math.max(0.3, p.size * 0.075), 0, 2 * Math.PI);
+                    ctx.fill();
+                    //console.log('i = %f  slice = %f restY = %f', i, slice, p.restY);
+                    //return;
+                }
+            }
+            /*
+            sortedPoints.forEach(p => {
+                // Simple color based on depth
+                //const green = 255 / p.size;
+                //const pcolor = `rgba(255, 255, 255, ${p.size / 20})`;
+                if (p.restY > slice) {
+                    return;
+                }
+                palpha =  normalizeToZeroOne(p.size, 15, 30);
+                pcolor = `rgba(255, ${p.projectedX * 0.6}, ${p.projectedY * 0.6}, ${palpha})`;
+                ctx.fillStyle = pcolor;
+                ctx.beginPath();
+                ctx.arc(p.projectedX, p.projectedY, Math.max(1, p.size * 0.1), 0, 2 * Math.PI);
+                ctx.fill();
+                //console.log('psize = %f', normalizeToZeroOne(p.size, 15, 30));
+                //console.log('restY = %f', p.restY);
+            });*/
+
+            requestAnimationFrame(drawTorus);
+        }
+
+        function drawGraph() {
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw Grid and Axes (Annotated Background)
+            ctx.strokeStyle = '#eee';
+            ctx.lineWidth = 1;
+            ctx.font = '10px sans-serif';
+            ctx.fillStyle = '#666';
+
+            // Horizontal grid lines and Y-axis labels
+            for (let i = -10; i <= 10; i++) {
+                const y = originY - i * (scaleY / 2); // 1 unit increment
+                ctx.beginPath();
+                ctx.moveTo(originX, y);
+                ctx.lineTo(width - 20, y);
+                ctx.stroke();
+                ctx.fillText(i.toString(), originX - 25, y + 3);
+            }
+
+            // Vertical grid lines and X-axis labels
+            // Scale X-axis for 2*Pi (approx 6.28 units shown in graph width)
+            const xUnit = graphWidth / (2 * Math.PI); 
+            const piIncrement = Math.PI / 2;
+            const labels = ["0", "π/2", "π", "3π/2", "2π"];
+
+            for (let i = 0; i <= 4; i++) {
+                const x = originX + i * piIncrement * xUnit;
+                ctx.beginPath();
+                ctx.moveTo(x, 20);
+                ctx.lineTo(x, height - 20);
+                ctx.stroke();
+                ctx.fillText(labels[i], x - 10, height - 5);
+            }
+
+            // Draw main axes thicker
+            ctx.strokeStyle = '#333';
+            ctx.beginPath();
+            // Y Axis
+            ctx.moveTo(originX, 20);
+            ctx.lineTo(originX, height - 20);
+            ctx.stroke();
+            // X Axis
+            ctx.moveTo(originX, originY);
+            ctx.lineTo(width - 20, originY);
+            ctx.stroke();
+            
+            // Draw the Sine Wave
+            //const ctx = canvas.getContext("2d");
+            //ctx.strokeStyle = 'blue';
+            //ctx.lineWidth = 2;
+            //ctx.beginPath();
+            ctx.fillStyle ='blue';
+            //ctx.moveTo(originX, originY);
+
+            for (let x = 0; x < graphWidth; x += (16/deltaY)) {
+                // Map screen x coordinate to math coordinate (0 to 2*PI)
+                const mathX = (x / graphWidth) * (2 * Math.PI);
+                
+                // Calculate y using the sine function: y = A * sin(F * x + P)
+                // Invert y because canvas origin (0,0) is top-left
+                const mathY = deltaX * Math.sin(deltaY * mathX );
+                const screenY = originY - mathY * (scaleY / 2); // Use same scaling factor as grid
+
+                //ctx.lineTo(originX + x, screenY);
+                //ctx.moveTo(originX + x, screenY);
+                //ctx.beginPath(); // Start a new path
+                ctx.fillRect(originX + x, screenY, 8, 8);
+            }
+            //ctx.stroke();
+        }
+
+        function updateSlidertoValues() {
+            deltaX = parseFloat(deltaXSlider.value);
+            deltaY = parseFloat(deltaYSlider.value);
+            slice = parseFloat(sliceSlider.value);
+            //console.log("deltaX=%f deltaY=%f slice=%f", deltaX, deltaY, slice);
+            deltaXValueLabel.value = deltaX.toFixed(1);
+            deltaYValueLabel.value = deltaY.toFixed(1);
+            sliceValueLabel.value = slice.toFixed(1);
+
+            rotationAngleY = deltaX.toFixed(1) * 0.0005;
+            rotationAngleX = deltaY.toFixed(1) * 0.0005;
+            // Convert phase shift from radians to degrees for readability in label
+            //phaseValueLabel.textContent = `${phase.toFixed(1)} rad (${(phase * 180 / Math.PI).toFixed(0)}°)`;
+            
+            //drawGraph();
+            drawTorus();
+        }
+
+        function updateValuestoSlider() {
+            deltaX = parseFloat(deltaXValueLabel.value);
+            deltaY = parseFloat(deltaYValueLabel.value);
+            slice = parseFloat(sliceValueLabel.value);
+            //console.log("deltaX=%f deltaY=%f slice=%f", deltaX, deltaY, slice);
+            deltaXSlider.value = deltaX.toFixed(1);
+            deltaYSlider.value = deltaY.toFixed(1);
+            sliceSlider.value = slice.toFixed(1);
+
+            rotationAngleY = deltaX.toFixed(1) * 0.0005;
+            rotationAngleX = deltaY.toFixed(1) * 0.0005;
+            // Convert phase shift from radians to degrees for readability in label
+            //phaseValueLabel.textContent = `${phase.toFixed(1)} rad (${(phase * 180 / Math.PI).toFixed(0)}°)`;
+            
+            //drawGraph();
+            drawTorus();
+        }
+
+        // Add event listeners to controls
+        deltaXSlider.addEventListener('input', updateSlidertoValues);
+        deltaYSlider.addEventListener('input', updateSlidertoValues);
+        sliceSlider.addEventListener('input', updateSlidertoValues);
+
+        deltaXValueLabel.addEventListener('input', updateValuestoSlider);
+        deltaYValueLabel.addEventListener('input', updateValuestoSlider);
+        sliceValueLabel.addEventListener('input', updateValuestoSlider);
+
+        function toggleActive(button) {
+            if (button.id == "ResetButton") {
+                location.reload();
+            }
+        }
+
+        // generate torus 3D points
+        generateTorus();
+        
+        // Initial draw
+        //drawGraph();
+        drawTorus();
     </script>
 
 </body>
