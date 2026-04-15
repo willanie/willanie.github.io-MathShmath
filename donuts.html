@@ -74,12 +74,12 @@
     </nav>
 
     
-    <h1 style="color: #ff00ff; text-align: center; font-weight: 900; margin-bottom: 0;">Donuts</h1>
+    <h1 style="color: #ff00ff; text-align: center; font-weight: 900; margin-bottom: 0;margin-top: 0; ">Donuts</h1>
     <p style="font-size: 100%; text-align: center; margin-top: 0; margin-bottom: 0;">&#127849; &#127849; &#127849;</p>
 
     
 
-    <h1 id="trigtitle"; style="color: #ff00ff; text-align: center; font-weight: 900; margin-bottom: 0; font-size: 0.8rem;">Animated Torus</h1>
+    <h1 id="trigtitle"; style="color: #ff00ff; text-align: center; font-weight: 900; margin-top: 0; margin-bottom: 0; font-size: 0.8rem;">Animated Torus</h1>
     <div id="trigcontainer"; class="trigcontainer">
         <button class="custom-btn active"; id="ResetButton" onclick="toggleActive(this)">RESET</button>
         <h2 id="trigformula"; style="color: #0bd40b; margin-top: 0; margin-bottom: 0;">Torus built with Sin and Cos</h2>
@@ -214,7 +214,7 @@
 
                     // Torus parametric equations
                     const x = (R1 + R2 * Math.cos(sliceAngle)) * Math.cos(loopAngle);
-                    const y = 0.62 * (R1 + R2 * Math.cos(sliceAngle)) * Math.sin(loopAngle);
+                    const y = 0.5 * (R1 + R2 * Math.cos(sliceAngle)) * Math.sin(loopAngle);
                     const z = R2 * Math.sin(sliceAngle);
 
                     points.push(new Point3D(x, y, z));
