@@ -257,21 +257,27 @@
             //console.log(`deltaX: ${deltaX}  deltaY: ${deltaY}  sortedPointsSize: ${sortedPointsSize}`);
 
             // Draw points
-            //const pcolor = `rgba(255, 255, 255, 1.0)`;
-            let palpha = 0.7;
+            let pcolor = `rgba(255, 255, 255, 1.0)`;
+            ctx.fillStyle = pcolor;
+            let palpha = 0.8;
+            let dotsize = 2.0;
+            //ctx.beginPath();
             for (let i = 0; i < sortedPointsSize; i++) {
                 const p = sortedPoints[i];
                 if (p.restY > slice) {
                     //palpha =  normalizeToZeroOne(p.size, 2, 10);
                     pcolor = `rgba(255, ${p.projectedX * 0.6}, ${p.projectedY * 0.6}, ${palpha})`;
                     ctx.fillStyle = pcolor;
-                    ctx.beginPath();
-                    ctx.arc(p.projectedX, p.projectedY, Math.max(0.3, p.size * 0.075), 0, 2 * Math.PI);
-                    ctx.fill();
+                    //ctx.beginPath();
+                    //ctx.moveTo(p.projectedX + Math.max(0.3, p.size * dotsize), p.projectedY);
+                    //ctx.arc(p.projectedX, p.projectedY, Math.max(0.3, p.size * dotsize), 0, 2 * Math.PI);
+                    ctx.fillRect(p.projectedX, p.projectedY, dotsize, dotsize);
+                    //ctx.fill();
                     //console.log('i = %f  slice = %f restY = %f', i, slice, p.restY);
                     //return;
                 }
             }
+            //ctx.fill();
             /*
             sortedPoints.forEach(p => {
                 // Simple color based on depth
