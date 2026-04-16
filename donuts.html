@@ -87,8 +87,8 @@
         <div id="wavecontrols"; class="controls">
             <div  id="deltaXcontrol"; class="control-group">
                 <label style="color: white;">deltaX</label>
-                <input type="range" id="deltaXSlider" min="-20" max="20" step="2.0" value="0">
-                <input type="number" id="deltaXInput" value="0">
+                <input type="range" id="deltaXSlider" min="-20" max="20" step="1.0" value="5">
+                <input type="number" id="deltaXInput" value="5">
             </div>
             <div id="deltaYcontrol"; class="control-group">
                 <label style="color: white;">deltaY</label>
@@ -188,8 +188,7 @@
         //const canvas = document.getElementById(CANVAS_ID);
         //const ctx = canvas.getContext('2d');
         const points = [];
-        let rotationAngleX = 0;
-        let rotationAngleY = 0;
+
         const viewDistance = 2050; // Camera distance
 
         function normalizeToZeroOne(value, oldValMin, oldValMax) {
@@ -235,6 +234,8 @@
         let deltaX = parseFloat(deltaXSlider.value);
         let deltaY = parseFloat(deltaYSlider.value);
         let slice = parseFloat(sliceSlider.value);
+        let rotationAngleX = deltaX.toFixed(1) * 0.0005;
+        let rotationAngleY = deltaY.toFixed(1) * 0.0005;
         //let slice = 0;
 
         function drawTorus() {
@@ -257,11 +258,11 @@
 
             // Draw points
             //const pcolor = `rgba(255, 255, 255, 1.0)`;
-            //const palpha = 1.0;
+            let palpha = 0.7;
             for (let i = 0; i < sortedPointsSize; i++) {
                 const p = sortedPoints[i];
                 if (p.restY > slice) {
-                    palpha =  normalizeToZeroOne(p.size, 2, 10);
+                    //palpha =  normalizeToZeroOne(p.size, 2, 10);
                     pcolor = `rgba(255, ${p.projectedX * 0.6}, ${p.projectedY * 0.6}, ${palpha})`;
                     ctx.fillStyle = pcolor;
                     ctx.beginPath();
@@ -292,77 +293,6 @@
             requestAnimationFrame(drawTorus);
         }
 
-        function drawGraph() {
-            // Clear canvas
-            ctx.clearRect(0, 0, width, height);
-
-            // Draw Grid and Axes (Annotated Background)
-            ctx.strokeStyle = '#eee';
-            ctx.lineWidth = 1;
-            ctx.font = '10px sans-serif';
-            ctx.fillStyle = '#666';
-
-            // Horizontal grid lines and Y-axis labels
-            for (let i = -10; i <= 10; i++) {
-                const y = originY - i * (scaleY / 2); // 1 unit increment
-                ctx.beginPath();
-                ctx.moveTo(originX, y);
-                ctx.lineTo(width - 20, y);
-                ctx.stroke();
-                ctx.fillText(i.toString(), originX - 25, y + 3);
-            }
-
-            // Vertical grid lines and X-axis labels
-            // Scale X-axis for 2*Pi (approx 6.28 units shown in graph width)
-            const xUnit = graphWidth / (2 * Math.PI); 
-            const piIncrement = Math.PI / 2;
-            const labels = ["0", "π/2", "π", "3π/2", "2π"];
-
-            for (let i = 0; i <= 4; i++) {
-                const x = originX + i * piIncrement * xUnit;
-                ctx.beginPath();
-                ctx.moveTo(x, 20);
-                ctx.lineTo(x, height - 20);
-                ctx.stroke();
-                ctx.fillText(labels[i], x - 10, height - 5);
-            }
-
-            // Draw main axes thicker
-            ctx.strokeStyle = '#333';
-            ctx.beginPath();
-            // Y Axis
-            ctx.moveTo(originX, 20);
-            ctx.lineTo(originX, height - 20);
-            ctx.stroke();
-            // X Axis
-            ctx.moveTo(originX, originY);
-            ctx.lineTo(width - 20, originY);
-            ctx.stroke();
-            
-            // Draw the Sine Wave
-            //const ctx = canvas.getContext("2d");
-            //ctx.strokeStyle = 'blue';
-            //ctx.lineWidth = 2;
-            //ctx.beginPath();
-            ctx.fillStyle ='blue';
-            //ctx.moveTo(originX, originY);
-
-            for (let x = 0; x < graphWidth; x += (16/deltaY)) {
-                // Map screen x coordinate to math coordinate (0 to 2*PI)
-                const mathX = (x / graphWidth) * (2 * Math.PI);
-                
-                // Calculate y using the sine function: y = A * sin(F * x + P)
-                // Invert y because canvas origin (0,0) is top-left
-                const mathY = deltaX * Math.sin(deltaY * mathX );
-                const screenY = originY - mathY * (scaleY / 2); // Use same scaling factor as grid
-
-                //ctx.lineTo(originX + x, screenY);
-                //ctx.moveTo(originX + x, screenY);
-                //ctx.beginPath(); // Start a new path
-                ctx.fillRect(originX + x, screenY, 8, 8);
-            }
-            //ctx.stroke();
-        }
 
         function updateSlidertoValues() {
             deltaX = parseFloat(deltaXSlider.value);
@@ -421,6 +351,7 @@
         // Initial draw
         //drawGraph();
         drawTorus();
+        updateSlidertoValues();
     </script>
 
 </body>
