@@ -29,6 +29,24 @@
                 font-size: 1rem;    /*    Optional: smaller font for landscape */
             }
         }
+
+        .form-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 40vw;
+            background-color: #04AA6D;
+            color: white;
+            padding: 0.6vh 0.6vw;
+            font-size: 2.5vh;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: Arial, sans-serif;
+        }
+        .form-btn:hover { background-color: #357ae8; }
     </style>
 </head>
 <body>
@@ -48,6 +66,13 @@
         <p style="color: #f09d04; text-align: center; font-size: clamp(1rem, 1rem + 1vh, 2rem); margin-bottom: 0.5em; margin-top: 0.5em;">intermediate math <span style="color: red;">fun.</span></p>
         <p style="color: #0f7214; text-align: center; font-size: clamp(1rem, 1rem + 1vh, 2rem); margin-bottom: 0.5em; margin-top: 0.5em;">Yeah, it's hard to believe</p>
         <p style="color: #ee1919; text-align: center; font-size: clamp(1rem, 1rem + 1vh, 2rem); margin-bottom: 0.5em; margin-top: 0.5em;">that's possible.</p>
+
+        <!-- Replace the URL below with your actual Google Form share link -->
+    <div style="display: flex; justify-content: center;">
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdTD6VsGcFCxjG_Z5KSLpOrw11wSwBvTwUIfF8AKZmfcNd8XQ/viewform?usp=publish-editor" class="form-btn" target="_blank">
+        If you wanna give feedback click this button to open the Google survey form for MathShmath
+        </a>
+    </div>
 
     <script>
         document.querySelector(".active")?.classList.remove("active");
