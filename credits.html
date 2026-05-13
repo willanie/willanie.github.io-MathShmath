@@ -16,6 +16,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css"> <!-- Link to your single CSS file -->
+
+    <style>
+        /* Base Styles (Portrait/Desktop) */
+        /* body { font-family: sans-serif; line-height: 1.6; padding: 20px; } */
+        p { margin-bottom: 1.5em; }
+
+        /* --- Special Case: Mobile Landscape --- */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            p {
+                margin-top: 0;
+                margin-bottom: 0.3em; /* Drastically reduce paragraph spacing */
+                line-height: 0.8;      /* Bring lines closer together */
+                font-size: 1rem;    /*    Optional: smaller font for landscape */
+            }
+        }
+    </style>
+    
 </head>
 <body>
     
